@@ -130,3 +130,81 @@ For more details, see the code in:
 - `Controllers/user.conroller.js`
 - `models/user.model.js`
 - `routes/user.routes.js`
+
+### Login User
+
+- **URL:** `/api/users/login`
+- **Method:** `POST`
+- **Body Example:**
+  ```json
+  {
+    "email": "john@example.com",
+    "password": "yourpassword"
+  }
+  ```
+
+#### Data Requirements
+
+| Field    | Type   | Required | Description                        |
+|----------|--------|----------|------------------------------------|
+| email    | string | Yes      | Must be a valid email address      |
+| password | string | Yes      | At least 6 characters long         |
+
+---
+
+#### Possible Responses
+
+- **Success (200 OK):**
+  ```json
+  {
+    "user": {
+      "_id": "user_id",
+      "fullname": {
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "email": "john@example.com",
+      "socketId": null
+    },
+    "token": "jwt_token"
+  }
+  ```
+
+- **Validation Error (400 Bad Request):**
+  ```json
+  {
+    "errors": [
+      {
+        "msg": "Valid email is required",
+        "param": "email",
+        "location": "body"
+      },
+      {
+        "msg": "Password must be at least 6 characters long",
+        "param": "password",
+        "location": "body"
+      }
+    ]
+  }
+  ```
+
+- **Authentication Error (400 Bad Request):**
+  ```json
+  {
+    "message": "Invalid email or password"
+  }
+  ```
+
+- **Server Error (500 Internal Server Error):**
+  ```json
+  {
+    "message": "Error message"
+  }
+  ```
+
+---
+
+**Note:**  
+- If the email or password is missing or invalid, you will get a validation error.
+- If the credentials are incorrect, you will get an authentication error.
+- On successful login, you receive the user object and a JWT token.

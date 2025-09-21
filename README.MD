@@ -208,3 +208,113 @@ For more details, see the code in:
 - If the email or password is missing or invalid, you will get a validation error.
 - If the credentials are incorrect, you will get an authentication error.
 - On successful login, you receive the user object and a JWT token.
+
+### Get User Profile
+
+- **URL:** `/api/users/profile`
+- **Method:** `GET`
+- **Authentication:** Required (JWT token in cookie or `Authorization` header)
+
+#### Description
+
+Returns the authenticated user's profile information.
+
+#### Request Headers
+
+- `Cookie: token=jwt_token`  
+  or  
+- `Authorization: Bearer jwt_token`
+
+#### Success Response
+
+- **Status:** `200 OK`
+- **Body:**
+  ```json
+  {
+    "user": {
+      "_id": "user_id",
+      "fullname": {
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "email": "john@example.com",
+      "socketId": null
+    }
+  }
+  ```
+
+#### Error Responses
+
+- **Missing or Invalid Token (401 Unauthorized):**
+  ```json
+  {
+    "Message": "Access Denied , No Token Provided"
+  }
+  ```
+  or
+  ```json
+  {
+    "Message": "Token is blacklisted , Please login again"
+  }
+  ```
+  or
+  ```json
+  {
+    "Message": "Invalid Token"
+  }
+  ```
+
+---
+
+### Logout User
+
+- **URL:** `/api/users/logout`
+- **Method:** `GET`
+- **Authentication:** Required (JWT token in cookie or `Authorization` header)
+
+#### Description
+
+Logs out the authenticated user by blacklisting their JWT token for 24 hours.
+
+#### Request Headers
+
+- `Cookie: token=jwt_token`  
+  or  
+- `Authorization: Bearer jwt_token`
+
+#### Success Response
+
+- **Status:** `200 OK`
+- **Body:**
+  ```json
+  {
+    "Message": "Logged Out Successfully"
+  }
+  ```
+
+#### Error Responses
+
+- **Missing or Invalid Token (401 Unauthorized):**
+  ```json
+  {
+    "Message": "Access Denied , No Token Provided"
+  }
+  ```
+  or
+  ```json
+  {
+    "Message": "Token is blacklisted , Please login again"
+  }
+  ```
+  or
+  ```json
+  {
+    "Message": "Invalid Token"
+  }
+  ```
+
+---
+
+**Note:**  
+- After logout, the JWT token is blacklisted and cannot be used for authentication for the next 24 hours.
+- Always include the JWT token in your requests to protected routes.

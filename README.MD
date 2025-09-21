@@ -318,3 +318,144 @@ Logs out the authenticated user by blacklisting their JWT token for 24 hours.
 **Note:**  
 - After logout, the JWT token is blacklisted and cannot be used for authentication for the next 24 hours.
 - Always include the JWT token in your requests to protected routes.
+
+### Register Captain
+
+- **URL:** `/api/captains/register`
+- **Method:** `POST`
+
+#### Description
+
+Registers a new captain (driver) with vehicle and location details.
+
+#### Request Body Example
+
+```json
+{
+  "fullname": {
+    "firstName": "Ali",
+    "lastName": "Khan"
+  },
+  "email": "ali.captain@example.com",
+  "password": "securepassword",
+  "vechicle": {
+    "color": "White",
+    "plate": "ABC123",
+    "capicity": 4,
+    "vechicleType": "car"
+  },
+  "location": {
+    "lat": 24.8607,
+    "lng": 67.0011
+  }
+}
+```
+
+#### Data Requirements
+
+| Field                       | Type     | Required | Description                                      |
+|-----------------------------|----------|----------|--------------------------------------------------|
+| fullname.firstName          | string   | Yes      | Captain's first name (min 3 chars)               |
+| fullname.lastName           | string   | Yes      | Captain's last name (min 3 chars)                |
+| email                       | string   | Yes      | Must be a valid, unique email address            |
+| password                    | string   | Yes      | At least 6 characters long                       |
+| vechicle.color              | string   | Yes      | Vehicle color (min 3 chars)                      |
+| vechicle.plate              | string   | Yes      | Vehicle plate (unique, min 3 chars)              |
+| vechicle.capicity           | number   | Yes      | Vehicle capacity (min 1)                         |
+| vechicle.vechicleType       | string   | Yes      | One of: `car`, `motorcycle`, `auto`              |
+| location.lat                | number   | Yes      | Latitude                                         |
+| location.lng                | number   | Yes      | Longitude                                        |
+
+---
+
+#### Success Response
+
+- **Status:** `201 Created`
+- **Body:**
+  ```json
+  {
+    "captain": {
+      "_id": "captain_id",
+      "fullname": {
+        "firstName": "Ali",
+        "lastName": "Khan"
+      },
+      "email": "ali.captain@example.com",
+      "vechicle": {
+        "color": "White",
+        "plate": "ABC123",
+        "capicity": 4,
+        "vechicleType": "car"
+      },
+      "location": {
+        "lat": 24.8607,
+        "lng": 67.0011
+      },
+      "status": "inactive",
+      "socketId": null
+    },
+    "token": "jwt_token"
+  }
+  ```
+
+---
+
+#### Validation Error Response
+
+- **Status:** `400 Bad Request`
+- **Body:**
+  ```json
+  {
+    "errors": [
+      {
+        "msg": "First name is required",
+        "param": "fullname.firstName",
+        "location": "body"
+      },
+      {
+        "msg": "Vehicle plate is required",
+        "param": "vechicle.plate",
+        "location": "body"
+      }
+      // ...other errors
+    ]
+  }
+  ```
+
+---
+
+#### Duplicate Email or Plate Error
+
+- **Status:** `400 Bad Request`
+- **Body:**
+  ```json
+  {
+    "Message": "Captain with this email already exists"
+  }
+  ```
+  or
+  ```json
+  {
+    "Message": "Vehicle plate already exists"
+  }
+  ```
+
+---
+
+#### Server Error Response
+
+- **Status:** `500 Internal Server Error`
+- **Body:**
+  ```json
+  {
+    "message": "Error message"
+  }
+  ```
+
+---
+
+**Notes:**
+- All fields are required unless specified.
+- Passwords are hashed before saving.
+- JWT token is returned on successful registration.
+- Vehicle plate and email must be unique.
